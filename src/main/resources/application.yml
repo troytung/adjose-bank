@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  jpa:
+      # The SQL dialect makes Hibernate generate better SQL for the chosen database
+      database-platform: org.hibernate.dialect.MySQL8Dialect
+      # Hibernate ddl auto (none, create, create-drop, validate, update)
+      hibernate.ddl-auto: none
+  datasource:
+    url: jdbc:mysql://localhost:3306/adjose_bank
+    username: adjose
+    password: adjose
+
+logging:
+  level:
+    ROOT: INFO
+    org.hibernate:
+      SQL: DEBUG
+      type: TRACE
