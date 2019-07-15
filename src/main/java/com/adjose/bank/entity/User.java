@@ -9,10 +9,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.util.Set;
 
 @Data
-@EqualsAndHashCode(exclude = "authorities")
+@EqualsAndHashCode(of = "username")
 @Entity(name = "users")
 public class User {
 
@@ -23,6 +24,9 @@ public class User {
     private String password;
 
     private boolean enabled;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private UserProfile userProfile;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Authority> authorities;
