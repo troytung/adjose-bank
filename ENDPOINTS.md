@@ -30,3 +30,15 @@
     http://localhost:8080/v1/users/{username}
     http://localhost:8080/v1/users/adjose
     ```
+- create account for login user
+    ```bash
+    curl -i -X POST \
+       -H "Content-Type:application/x-www-form-urlencoded" \
+       -d "currency=USD" \
+     'http://localhost:8080/v1/accounts'
+    ```
+- get login user's accounts
+    ```bash
+    curl -i -X GET \
+     'http://localhost:8080/v1/accounts'
+    ```

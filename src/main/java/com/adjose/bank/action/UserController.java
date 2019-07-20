@@ -4,6 +4,7 @@ import com.adjose.bank.dao.UserRepository;
 import com.adjose.bank.entity.Authority;
 import com.adjose.bank.entity.User;
 import com.adjose.bank.entity.UserProfile;
+import com.adjose.bank.exception.BadRequestException;
 import com.adjose.bank.exception.ResourceNotFoundException;
 import com.adjose.bank.security.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class UserController {
                            @RequestParam String email, @RequestParam String phoneNumber) {
 
         if (userRepository.existsById(username)) {
-            throw new RuntimeException("User " + username + " exists");
+            throw new BadRequestException("User " + username + " exists");
         }
 
         final User newUser = new User();
@@ -52,6 +53,7 @@ public class UserController {
         authority.setAuthority(Role.CUSTOMER.name());
         newUser.setAuthorities(singleton(authority));
         final UserProfile userProfile = new UserProfile();
+        userProfile.setUsername(username);
         userProfile.setUser(newUser);
         userProfile.setEmail(email);
         userProfile.setPhoneNumber(phoneNumber);

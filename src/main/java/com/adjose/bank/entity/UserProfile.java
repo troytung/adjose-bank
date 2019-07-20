@@ -4,26 +4,26 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "username")
 @Entity(name = "user_profiles")
 public class UserProfile extends AuditEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String username;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "username", nullable = false)
@@ -40,7 +40,8 @@ public class UserProfile extends AuditEntity {
     @Size(max = 15)
     private String phoneNumber;
 
-    // todo add accounts
-//    private List<Account> accounts;
+    @OneToMany(mappedBy = "userProfile", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private List<Account> accounts;
 
 }

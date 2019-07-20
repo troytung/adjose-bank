@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Data
@@ -18,6 +19,7 @@ import java.util.Set;
 public class User {
 
     @Id
+    @Size(max = 50)
     private String username;
 
     @JsonIgnore

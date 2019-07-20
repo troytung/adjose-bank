@@ -42,7 +42,6 @@ see ENDPOINTS.md
 
 
 ### todo
-- add Account entity and use cases
 - add Transaction entity and use cases
 - add Swagger
 - add https
