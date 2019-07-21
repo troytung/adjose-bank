@@ -13,7 +13,7 @@ import javax.persistence.ManyToOne;
 
 @Data
 @Entity(name = "authorities")
-public class Authority {
+public class Authority extends AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

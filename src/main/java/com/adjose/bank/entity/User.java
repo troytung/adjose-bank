@@ -16,7 +16,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(of = "username")
 @Entity(name = "users")
-public class User {
+public class User extends AuditEntity {
 
     @Id
     @Size(max = 50)
