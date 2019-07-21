@@ -54,3 +54,5 @@ https://www.callicoder.com/hibernate-spring-boot-jpa-one-to-one-mapping-example/
 https://www.callicoder.com/hibernate-spring-boot-jpa-one-to-many-mapping-example/
 - Spring Security  
 https://segmentfault.com/a/1190000015191298
+- Hibernate Inheritance
+https://www.baeldung.com/hibernate-inheritance
