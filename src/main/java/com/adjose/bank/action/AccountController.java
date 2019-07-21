@@ -40,7 +40,7 @@ public class AccountController {
         return userRepository.findById(principal.getName()).map(user -> {
 
             if (accountRepository.existsByUserProfileAndCurrency(user.getUserProfile(), currency)) {
-                throw new BadRequestException("Account with " + currency + " exists");
+                throw new BadRequestException("Account with " + currency + " currency exists");
             }
 
             final Account account = new Account();

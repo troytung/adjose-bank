@@ -18,17 +18,19 @@
     http://localhost:8080/logout
     ```
 - get login user's profile
-    ```
-    http://localhost:8080/v1/userprofiles
+    ```bash
+    curl -i -X GET \
+     'http://localhost:8080/v1/userprofiles'
     ```
 - get all users
-    ```
-    http://localhost:8080/v1/users
+    ```bash
+    curl -i -X GET \
+     'http://localhost:8080/v1/users'
     ```
 - get a user
-    ```
-    http://localhost:8080/v1/users/{username}
-    http://localhost:8080/v1/users/adjose
+    ```bash
+    curl -i -X GET \
+     'http://localhost:8080/v1/users/{username}'
     ```
 - create account for login user
     ```bash
@@ -42,3 +44,13 @@
     curl -i -X GET \
      'http://localhost:8080/v1/accounts'
     ```
+- update login user's profile
+    ```bash
+    curl -i -X PUT \
+       -H "Content-Type:application/x-www-form-urlencoded" \
+       -d "email=adjose@adjose.com" \
+       -d "phoneNumber=0912345678" \
+     'http://localhost:8080/v1/userprofiles'
+    ```
+
+

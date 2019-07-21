@@ -3,6 +3,9 @@ package com.adjose.bank.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,6 +23,8 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(of = "username")
 @Entity(name = "user_profiles")
+@OptimisticLocking(type = OptimisticLockType.ALL)
+@DynamicUpdate
 public class UserProfile extends AuditEntity {
 
     @Id
