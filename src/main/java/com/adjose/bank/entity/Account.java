@@ -3,6 +3,9 @@ package com.adjose.bank.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,11 +15,15 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 
 @Data
 @EqualsAndHashCode(of = "accountNumber")
 @Entity(name = "accounts")
+@OptimisticLocking(type = OptimisticLockType.DIRTY)
+@DynamicUpdate
 public class Account extends AuditEntity {
 
     @Id
@@ -32,7 +39,7 @@ public class Account extends AuditEntity {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    // todo add transactions
-//    private List<Account> accounts;
+    @NotNull
+    private BigDecimal balance;
 
 }

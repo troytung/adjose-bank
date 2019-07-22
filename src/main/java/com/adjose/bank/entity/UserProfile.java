@@ -23,7 +23,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(of = "username")
 @Entity(name = "user_profiles")
-@OptimisticLocking(type = OptimisticLockType.ALL)
+@OptimisticLocking(type = OptimisticLockType.DIRTY)
 @DynamicUpdate
 public class UserProfile extends AuditEntity {
 

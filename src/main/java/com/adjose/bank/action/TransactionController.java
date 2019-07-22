@@ -5,6 +5,7 @@ import com.adjose.bank.dao.TransactionRepository;
 import com.adjose.bank.dao.UserProfileRepository;
 import com.adjose.bank.entity.Account;
 import com.adjose.bank.entity.transaction.Deposit;
+import com.adjose.bank.exception.BadRequestException;
 import com.adjose.bank.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.Date;
@@ -39,21 +41,25 @@ public class TransactionController {
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping("/v1/transactions/deposit")
     @ResponseStatus(code = HttpStatus.CREATED)
+    @Transactional
     public Deposit deposit(@RequestParam String accountNumber, @RequestParam BigDecimal amount,
                            Principal principal) {
 
         return userProfileRepository.findById(principal.getName()).map(userProfile -> {
-            final Optional<Account> accountOptional = accountRepository.findByAccountNumberAndUserProfile(accountNumber, userProfile);
+            final Optional<Account> accountOptional =
+                    accountRepository.findByAccountNumberAndUserProfile(accountNumber, userProfile);
             if (accountOptional.isPresent()) {
-                // todo update account balance
+                final Account account = accountOptional.get();
+                account.setBalance(account.getBalance().add(amount));
+                accountRepository.save(account);
                 final Deposit deposit = new Deposit();
                 deposit.setTransactionId(UUID.randomUUID().toString());
                 deposit.setTransactionDate(new Date());
-                deposit.setAccount(accountOptional.get());
+                deposit.setAccount(account);
                 deposit.setAmount(amount);
                 return transactionRepository.save(deposit);
             } else {
-                throw new ResourceNotFoundException("Account not found");
+                throw new BadRequestException("Account not found");
             }
         }).orElseThrow(() -> new ResourceNotFoundException("User profile not found"));
     }

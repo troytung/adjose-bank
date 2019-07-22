@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
@@ -47,6 +48,7 @@ public class AccountController {
             account.setAccountNumber(UUID.randomUUID().toString());
             account.setUserProfile(user.getUserProfile());
             account.setCurrency(currency);
+            account.setBalance(BigDecimal.ZERO);
             return accountRepository.save(account);
         }).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + principal.getName()));
     }
