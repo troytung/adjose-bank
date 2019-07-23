@@ -70,3 +70,14 @@
      'http://localhost:8080/v1/transactions/deposit'
     ```
 
+- create a withdrawal transaction for a given account and the amount of money
+    ```bash
+    curl -i -X POST \
+       -H "Content-Type:application/x-www-form-urlencoded" \
+       -d "accountNumber={accounts.account_number}" \
+       -d "amount={amount}" \
+     'http://localhost:8080/v1/transactions/withdraw'
+    ```
+
+
+

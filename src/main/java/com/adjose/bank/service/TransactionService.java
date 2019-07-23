@@ -4,6 +4,7 @@ import com.adjose.bank.dao.AccountRepository;
 import com.adjose.bank.dao.TransactionRepository;
 import com.adjose.bank.entity.Account;
 import com.adjose.bank.entity.transaction.Deposit;
+import com.adjose.bank.entity.transaction.Withdrawal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,19 @@ public class TransactionService {
         deposit.setAccount(account);
         deposit.setAmount(amount);
         return transactionRepository.save(deposit);
+    }
+
+    @Transactional
+    public Withdrawal withdraw(final Account account, final BigDecimal amount) {
+
+        account.setBalance(account.getBalance().subtract(amount));
+        accountRepository.save(account);
+        final Withdrawal withdrawal = new Withdrawal();
+        withdrawal.setTransactionId(UUID.randomUUID().toString());
+        withdrawal.setTransactionDate(new Date());
+        withdrawal.setAccount(account);
+        withdrawal.setAmount(amount);
+        return transactionRepository.save(withdrawal);
     }
 
 }

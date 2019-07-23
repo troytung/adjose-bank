@@ -4,6 +4,7 @@ import com.adjose.bank.dao.AccountRepository;
 import com.adjose.bank.dao.UserProfileRepository;
 import com.adjose.bank.entity.Account;
 import com.adjose.bank.entity.transaction.Deposit;
+import com.adjose.bank.entity.transaction.Withdrawal;
 import com.adjose.bank.exception.BadRequestException;
 import com.adjose.bank.exception.ResourceNotFoundException;
 import com.adjose.bank.service.TransactionService;
@@ -46,6 +47,28 @@ public class TransactionController {
                     accountRepository.findByAccountNumberAndUserProfile(accountNumber, userProfile);
             if (accountOptional.isPresent()) {
                 return transactionService.deposit(accountOptional.get(), amount);
+            } else {
+                throw new BadRequestException("Account not found");
+            }
+        }).orElseThrow(() -> new ResourceNotFoundException("User profile not found"));
+    }
+
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @PostMapping("/v1/transactions/withdraw")
+    @ResponseStatus(code = HttpStatus.OK)
+    public Withdrawal withdraw(@RequestParam String accountNumber, @RequestParam BigDecimal amount,
+                               Principal principal) {
+
+        return userProfileRepository.findById(principal.getName()).map(userProfile -> {
+            final Optional<Account> accountOptional =
+                    accountRepository.findByAccountNumberAndUserProfile(accountNumber, userProfile);
+            if (accountOptional.isPresent()) {
+                final Account account = accountOptional.get();
+                if (account.getBalance().compareTo(amount) >= 0) {
+                    return transactionService.withdraw(account, amount);
+                } else {
+                    throw new BadRequestException("Insufficient balance");
+                }
             } else {
                 throw new BadRequestException("Account not found");
             }
