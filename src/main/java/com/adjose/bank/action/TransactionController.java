@@ -3,7 +3,9 @@ package com.adjose.bank.action;
 import com.adjose.bank.dao.AccountRepository;
 import com.adjose.bank.dao.UserProfileRepository;
 import com.adjose.bank.entity.Account;
+import com.adjose.bank.entity.UserProfile;
 import com.adjose.bank.entity.transaction.Deposit;
+import com.adjose.bank.entity.transaction.TransferOut;
 import com.adjose.bank.entity.transaction.Withdrawal;
 import com.adjose.bank.exception.BadRequestException;
 import com.adjose.bank.exception.ResourceNotFoundException;
@@ -73,6 +75,36 @@ public class TransactionController {
                 throw new BadRequestException("Account not found");
             }
         }).orElseThrow(() -> new ResourceNotFoundException("User profile not found"));
+    }
+
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @PostMapping("/v1/transactions/transfer")
+    @ResponseStatus(code = HttpStatus.OK)
+    public TransferOut transfer(@RequestParam String fromAccountNumber, @RequestParam String toAccountNumber,
+                                @RequestParam BigDecimal amount, Principal principal) {
+
+        final Optional<UserProfile> userProfileOptional = userProfileRepository.findById(principal.getName());
+        if (!userProfileOptional.isPresent()) {
+            throw new ResourceNotFoundException("User profile not found");
+        }
+
+        final Optional<Account> fromAccountOptional =
+                accountRepository.findByAccountNumberAndUserProfile(fromAccountNumber, userProfileOptional.get());
+        if (!fromAccountOptional.isPresent()) {
+            throw new BadRequestException(String.format("Account not found with id: %s", fromAccountNumber));
+        }
+
+        final Optional<Account> toAccountOptional = accountRepository.findById(toAccountNumber);
+        if (!toAccountOptional.isPresent()) {
+            throw new BadRequestException(String.format("Account not found with id: %s", toAccountNumber));
+        }
+
+        final Account fromAccount = fromAccountOptional.get();
+        if (fromAccount.getBalance().compareTo(amount) >= 0) {
+            return transactionService.transfer(fromAccount, toAccountOptional.get(), amount);
+        } else {
+            throw new BadRequestException("Insufficient balance");
+        }
     }
 
 }

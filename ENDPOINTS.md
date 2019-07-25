@@ -3,10 +3,10 @@
     ```bash
     curl -i -X POST \
        -H "Content-Type:application/x-www-form-urlencoded" \
-       -d "username=adjose" \
-       -d "password=adjose" \
-       -d "email=adjose@adjose.com" \
-       -d "phoneNumber=0987654321" \
+       -d "username={username}" \
+       -d "password={password}" \
+       -d "email={email}" \
+       -d "phoneNumber={phone_number}" \
      'http://localhost:8080/v1/users'
     ```
 
@@ -42,7 +42,7 @@
     ```bash
     curl -i -X POST \
        -H "Content-Type:application/x-www-form-urlencoded" \
-       -d "currency=USD" \
+       -d "currency={currency_code}" \
      'http://localhost:8080/v1/accounts'
     ```
 
@@ -56,28 +56,37 @@
     ```bash
     curl -i -X PUT \
        -H "Content-Type:application/x-www-form-urlencoded" \
-       -d "email=adjose@adjose.com" \
-       -d "phoneNumber=0912345678" \
+       -d "email={email}" \
+       -d "phoneNumber={phone_number}" \
      'http://localhost:8080/v1/userprofiles'
     ```
 
-- create a deposit transaction for a given account and the amount of money
+- make a deposit transaction for a given account and the amount of money
     ```bash
     curl -i -X POST \
        -H "Content-Type:application/x-www-form-urlencoded" \
-       -d "accountNumber={accounts.account_number}" \
+       -d "accountNumber={account_number}" \
        -d "amount={amount}" \
      'http://localhost:8080/v1/transactions/deposit'
     ```
 
-- create a withdrawal transaction for a given account and the amount of money
+- make a withdrawal transaction for a given account and the amount of money
     ```bash
     curl -i -X POST \
        -H "Content-Type:application/x-www-form-urlencoded" \
-       -d "accountNumber={accounts.account_number}" \
+       -d "accountNumber={account_number}" \
        -d "amount={amount}" \
      'http://localhost:8080/v1/transactions/withdraw'
     ```
 
+- make a transfer transaction to transfer a given amount of money from one account to another
+    ```bash
+    curl -i -X POST \
+       -H "Content-Type:application/x-www-form-urlencoded" \
+       -d "fromAccountNumber={account_number}" \
+       -d "toAccountNumber={account_number}" \
+       -d "amount={amount}" \
+     'http://localhost:8080/v1/transactions/transfer'
+    ```
 
 
