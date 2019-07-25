@@ -44,15 +44,16 @@ public class TransactionController {
     public Deposit deposit(@RequestParam String accountNumber, @RequestParam BigDecimal amount,
                            Principal principal) {
 
-        return userProfileRepository.findById(principal.getName()).map(userProfile -> {
-            final Optional<Account> accountOptional =
-                    accountRepository.findByAccountNumberAndUserProfile(accountNumber, userProfile);
-            if (accountOptional.isPresent()) {
-                return transactionService.deposit(accountOptional.get(), amount);
-            } else {
-                throw new BadRequestException("Account not found");
-            }
-        }).orElseThrow(() -> new ResourceNotFoundException("User profile not found"));
+        return userProfileRepository.findById(principal.getName())
+                .map(userProfile -> deposit(userProfile, accountNumber, amount))
+                .orElseThrow(() -> new ResourceNotFoundException("User profile not found"));
+    }
+
+    private Deposit deposit(UserProfile userProfile, String accountNumber, BigDecimal amount) {
+
+        return accountRepository.findByAccountNumberAndUserProfile(accountNumber, userProfile)
+                .map(account -> transactionService.deposit(account, amount))
+                .orElseThrow(() -> new BadRequestException("Account not found"));
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
@@ -61,20 +62,23 @@ public class TransactionController {
     public Withdrawal withdraw(@RequestParam String accountNumber, @RequestParam BigDecimal amount,
                                Principal principal) {
 
-        return userProfileRepository.findById(principal.getName()).map(userProfile -> {
-            final Optional<Account> accountOptional =
-                    accountRepository.findByAccountNumberAndUserProfile(accountNumber, userProfile);
-            if (accountOptional.isPresent()) {
-                final Account account = accountOptional.get();
-                if (account.getBalance().compareTo(amount) >= 0) {
-                    return transactionService.withdraw(account, amount);
-                } else {
-                    throw new BadRequestException("Insufficient balance");
-                }
-            } else {
-                throw new BadRequestException("Account not found");
-            }
-        }).orElseThrow(() -> new ResourceNotFoundException("User profile not found"));
+        final Optional<UserProfile> userProfileOptional = userProfileRepository.findById(principal.getName());
+        if (!userProfileOptional.isPresent()) {
+            throw new ResourceNotFoundException("User profile not found");
+        }
+
+        final Optional<Account> accountOptional =
+                accountRepository.findByAccountNumberAndUserProfile(accountNumber, userProfileOptional.get());
+        if (!accountOptional.isPresent()) {
+            throw new BadRequestException("Account not found");
+        }
+
+        final Account account = accountOptional.get();
+        if (account.getBalance().compareTo(amount) >= 0) {
+            return transactionService.withdraw(account, amount);
+        } else {
+            throw new BadRequestException("Insufficient balance");
+        }
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
