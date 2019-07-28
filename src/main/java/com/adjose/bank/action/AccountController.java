@@ -1,11 +1,9 @@
 package com.adjose.bank.action;
 
 import com.adjose.bank.dao.jpa.AccountRepository;
-import com.adjose.bank.dao.jpa.UserRepository;
 import com.adjose.bank.entity.Account;
 import com.adjose.bank.entity.Currency;
 import com.adjose.bank.exception.BadRequestException;
-import com.adjose.bank.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,13 +21,10 @@ import java.util.UUID;
 @RestController
 public class AccountController {
 
-    private UserRepository userRepository;
     private AccountRepository accountRepository;
 
     @Autowired
-    public AccountController(final UserRepository userRepository,
-                             final AccountRepository accountRepository) {
-        this.userRepository = userRepository;
+    public AccountController(final AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
@@ -38,27 +33,23 @@ public class AccountController {
     @ResponseStatus(code = HttpStatus.CREATED)
     public Account createAccount(@RequestParam Currency currency, Principal principal) {
 
-        return userRepository.findById(principal.getName()).map(user -> {
+        final String username = principal.getName();
+        if (accountRepository.existsByUsernameAndCurrency(username, currency)) {
+            throw new BadRequestException("Account with " + currency + " currency exists");
+        }
 
-            if (accountRepository.existsByUserProfileAndCurrency(user.getUserProfile(), currency)) {
-                throw new BadRequestException("Account with " + currency + " currency exists");
-            }
-
-            final Account account = new Account();
-            account.setAccountNumber(UUID.randomUUID().toString());
-            account.setUserProfile(user.getUserProfile());
-            account.setCurrency(currency);
-            account.setBalance(BigDecimal.ZERO);
-            return accountRepository.save(account);
-        }).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + principal.getName()));
+        final Account account = new Account();
+        account.setAccountNumber(UUID.randomUUID().toString());
+        account.setUsername(username);
+        account.setCurrency(currency);
+        account.setBalance(BigDecimal.ZERO);
+        return accountRepository.save(account);
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("/v1/accounts")
     public List<Account> listAccounts(Principal principal) {
-
-        return userRepository.findById(principal.getName()).map(user -> user.getUserProfile().getAccounts())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + principal.getName()));
+        return accountRepository.findByUsername(principal.getName());
     }
 
 }

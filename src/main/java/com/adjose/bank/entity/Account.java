@@ -31,8 +31,11 @@ public class Account extends AuditEntity {
     @Column(name = "account_number")
     private String accountNumber;
 
+    @NotNull
+    private String username;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "username", nullable = false)
+    @JoinColumn(name = "username", nullable = false, insertable = false, updatable = false)
     @JsonIgnore
     private UserProfile userProfile;
 

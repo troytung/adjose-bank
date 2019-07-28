@@ -2,11 +2,9 @@ package com.adjose.bank.action;
 
 import com.adjose.bank.dao.jpa.AccountRepository;
 import com.adjose.bank.dao.jpa.TransactionRepository;
-import com.adjose.bank.dao.jpa.UserProfileRepository;
 import com.adjose.bank.dao.redis.TransactionDtoRepository;
 import com.adjose.bank.dto.TransactionDto;
 import com.adjose.bank.entity.Account;
-import com.adjose.bank.entity.UserProfile;
 import com.adjose.bank.entity.transaction.Deposit;
 import com.adjose.bank.entity.transaction.Transaction;
 import com.adjose.bank.entity.transaction.TransferOut;
@@ -31,19 +29,16 @@ import java.util.Optional;
 @RestController
 public class TransactionController {
 
-    private UserProfileRepository userProfileRepository;
     private AccountRepository accountRepository;
     private TransactionService transactionService;
     private TransactionDtoRepository transactionDtoRepository;
     private TransactionRepository transactionRepository;
 
     @Autowired
-    public TransactionController(final UserProfileRepository userProfileRepository,
-                                 final AccountRepository accountRepository,
+    public TransactionController(final AccountRepository accountRepository,
                                  final TransactionService transactionService,
                                  final TransactionDtoRepository transactionDtoRepository,
                                  final TransactionRepository transactionRepository) {
-        this.userProfileRepository = userProfileRepository;
         this.accountRepository = accountRepository;
         this.transactionService = transactionService;
         this.transactionDtoRepository = transactionDtoRepository;
@@ -56,15 +51,7 @@ public class TransactionController {
     public Deposit deposit(@RequestParam String accountNumber, @RequestParam BigDecimal amount,
                            Principal principal) {
 
-        // todo remove UserProfile check
-        return userProfileRepository.findById(principal.getName())
-                .map(userProfile -> deposit(userProfile, accountNumber, amount))
-                .orElseThrow(() -> new ResourceNotFoundException("User profile not found"));
-    }
-
-    private Deposit deposit(UserProfile userProfile, String accountNumber, BigDecimal amount) {
-
-        return accountRepository.findByAccountNumberAndUserProfile(accountNumber, userProfile)
+        return accountRepository.findByUsernameAndAccountNumber(principal.getName(), accountNumber)
                 .map(account -> transactionService.deposit(account, amount))
                 .orElseThrow(() -> new BadRequestException("Account not found"));
     }
@@ -75,14 +62,8 @@ public class TransactionController {
     public Withdrawal withdraw(@RequestParam String accountNumber, @RequestParam BigDecimal amount,
                                Principal principal) {
 
-        // todo remove UserProfile check
-        final Optional<UserProfile> userProfileOptional = userProfileRepository.findById(principal.getName());
-        if (!userProfileOptional.isPresent()) {
-            throw new ResourceNotFoundException("User profile not found");
-        }
-
         final Optional<Account> accountOptional =
-                accountRepository.findByAccountNumberAndUserProfile(accountNumber, userProfileOptional.get());
+                accountRepository.findByUsernameAndAccountNumber(principal.getName(), accountNumber);
         if (!accountOptional.isPresent()) {
             throw new BadRequestException("Account not found");
         }
@@ -101,14 +82,8 @@ public class TransactionController {
     public TransferOut transfer(@RequestParam String fromAccountNumber, @RequestParam String toAccountNumber,
                                 @RequestParam BigDecimal amount, Principal principal) {
 
-        // todo remove UserProfile check
-        final Optional<UserProfile> userProfileOptional = userProfileRepository.findById(principal.getName());
-        if (!userProfileOptional.isPresent()) {
-            throw new ResourceNotFoundException("User profile not found");
-        }
-
         final Optional<Account> fromAccountOptional =
-                accountRepository.findByAccountNumberAndUserProfile(fromAccountNumber, userProfileOptional.get());
+                accountRepository.findByUsernameAndAccountNumber(principal.getName(), fromAccountNumber);
         if (!fromAccountOptional.isPresent()) {
             throw new BadRequestException(String.format("Account not found with id: %s", fromAccountNumber));
         }
