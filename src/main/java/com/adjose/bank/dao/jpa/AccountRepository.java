@@ -1,4 +1,4 @@
-package com.adjose.bank.dao;
+package com.adjose.bank.dao.jpa;
 
 import com.adjose.bank.entity.Account;
 import com.adjose.bank.entity.Currency;

@@ -11,6 +11,9 @@ spring:
     url: jdbc:mysql://localhost:3306/adjose_bank
     username: adjose
     password: adjose
+  redis:
+    host: localhost
+    port: 6379
 
 logging:
   level:

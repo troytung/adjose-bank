@@ -1,7 +1,7 @@
 package com.adjose.bank.action;
 
-import com.adjose.bank.dao.AccountRepository;
-import com.adjose.bank.dao.UserRepository;
+import com.adjose.bank.dao.jpa.AccountRepository;
+import com.adjose.bank.dao.jpa.UserRepository;
 import com.adjose.bank.entity.Account;
 import com.adjose.bank.entity.Currency;
 import com.adjose.bank.exception.BadRequestException;

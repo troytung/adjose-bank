@@ -1,6 +1,6 @@
 package com.adjose.bank.action;
 
-import com.adjose.bank.dao.UserProfileRepository;
+import com.adjose.bank.dao.jpa.UserProfileRepository;
 import com.adjose.bank.entity.UserProfile;
 import com.adjose.bank.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

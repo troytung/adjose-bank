@@ -1,6 +1,6 @@
 package com.adjose.bank.action;
 
-import com.adjose.bank.dao.UserRepository;
+import com.adjose.bank.dao.jpa.UserRepository;
 import com.adjose.bank.entity.Authority;
 import com.adjose.bank.entity.User;
 import com.adjose.bank.entity.UserProfile;

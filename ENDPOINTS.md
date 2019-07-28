@@ -27,12 +27,14 @@
     ```
 
 - get all users
+    - only for ADMINISTRATOR
     ```bash
     curl -i -X GET \
      'http://localhost:8080/v1/users'
     ```
 
 - get a user
+    - only for ADMINISTRATOR
     ```bash
     curl -i -X GET \
      'http://localhost:8080/v1/users/{username}'
@@ -87,6 +89,13 @@
        -d "toAccountNumber={account_number}" \
        -d "amount={amount}" \
      'http://localhost:8080/v1/transactions/transfer'
+    ```
+
+- get the transaction record of a given transaction id
+    - only for ADMINISTRATOR
+    ```bash
+    curl -i -X GET \
+     'http://localhost:8080/v1/transactions/{transactionId}'
     ```
 
 

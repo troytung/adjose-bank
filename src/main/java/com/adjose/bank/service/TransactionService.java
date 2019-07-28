@@ -1,7 +1,7 @@
 package com.adjose.bank.service;
 
-import com.adjose.bank.dao.AccountRepository;
-import com.adjose.bank.dao.TransactionRepository;
+import com.adjose.bank.dao.jpa.AccountRepository;
+import com.adjose.bank.dao.jpa.TransactionRepository;
 import com.adjose.bank.entity.Account;
 import com.adjose.bank.entity.transaction.Deposit;
 import com.adjose.bank.entity.transaction.TransferIn;
